@@ -1,1 +1,1 @@
-https://sakalt.github.io/21.html
+https://sakalt.github.io/windows20-25/21.html
