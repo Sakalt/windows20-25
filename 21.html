@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 21</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+        }
+        #desktop {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .window {
+            position: absolute;
+            width: 600px;
+            height: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .title-bar {
+            background-color: #0078D7;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        .window-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .window-controls button:hover {
+            color: red;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 10px;
+            overflow: auto;
+        }
+        .taskbar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+        .start-button {
+            background: url('start-icon.png') no-repeat center center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .start-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .start-menu {
+            display: none;
+            position: absolute;
+            bottom: 50px;
+            left: 10px;
+            width: 200px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .start-menu ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .start-menu li {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .start-menu li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="desktop">
+        <!-- Applications will be appended here -->
+        <div class="taskbar">
+            <button class="start-button"></button>
+            <div class="start-menu" id="startMenu">
+                <ul>
+                    <li onclick="openApp('ブラウザ')">ブラウザ</li>
+                    <li onclick="openApp('カメラ')">カメラ</li>
+                    <li onclick="openApp('メディアプレイヤー')">メディアプレイヤー</li>
+                    <li onclick="openApp('効果音メーカー')">効果音メーカー</li>
+                    <li onclick="openApp('ペイント')">ペイント</li>
+                    <li onclick="openApp('電卓')">電卓</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        const startButton = document.querySelector('.start-button');
+        const startMenu = document.getElementById('startMenu');
+
+        startButton.addEventListener('click', () => {
+            startMenu.style.display = startMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        function openApp(name) {
+            const appWindow = document.createElement('div');
+            appWindow.className = 'window';
+            appWindow.style.top = '50px';
+            appWindow.style.left = '50px';
+            appWindow.innerHTML = `
+                <div class="title-bar">
+                    <span class="title">${name}</span>
+                    <div class="window-controls">
+                        <button class="minimize">-</button>
+                        <button class="maximize">□</button>
+                        <button class="close">x</button>
+                    </div>
+                </div>
+                <div class="content">
+                    ${getAppContent(name)}
+                </div>
+            `;
+            document.getElementById('desktop').appendChild(appWindow);
+
+            const minimizeButton = appWindow.querySelector('.minimize');
+            const maximizeButton = appWindow.querySelector('.maximize');
+            const closeButton = appWindow.querySelector('.close');
+
+            minimizeButton.addEventListener('click', () => {
+                appWindow.style.display = 'none';
+            });
+
+            maximizeButton.addEventListener('click', () => {
+                if (appWindow.style.width === '100vw') {
+                    appWindow.style.width = '600px';
+                    appWindow.style.height = '400px';
+                } else {
+                    appWindow.style.width = '100vw';
+                    appWindow.style.height = '100vh';
+                }
+            });
+
+            closeButton.addEventListener('click', () => {
+                appWindow.remove();
+            });
+
+            makeDraggable(appWindow);
+        }
+
+        function getAppContent(name) {
+            switch (name) {
+                case 'ブラウザ':
+                    return '<iframe src="https://www.google.com" style="width: 100%; height: 100%; border: none;"></iframe>';
+                case 'カメラ':
+                    return '<video id="camera" autoplay style="width: 100%; height: 100%;"></video>';
+                case 'メディアプレイヤー':
+                    return `
+                        <input type="file" id="mediaFile" accept="audio/*,video/*">
+                        <audio id="audioPlayer" controls style="width: 100%; display: none;"></audio>
+                        <video id="videoPlayer" controls style="width: 100%; display: none;"></video>
+                    `;
+                case '効果音メーカー':
+                    return '<button onclick="playSound()">音を再生</button>';
+                case 'ペイント':
+                    return '<iframe src="https://sakalt.github.io/paint" style="width: 100%; height: 100%; border: none;"></iframe>';
+                case '電卓':
+                    return '<iframe src="https://sakalt.github.io/calc" style="width: 100%; height: 100%; border: none;"></iframe>';
+                default:
+                    return '<p>アプリケーションが見つかりません</p>';
+            }
+        }
+
+        function makeDraggable(el) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            el.querySelector('.title-bar').addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - el.getBoundingClientRect().left;
+                offsetY = e.clientY - el.getBoundingClientRect().top;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    el.style.left = `${e.clientX - offsetX}px`;
+                    el.style.top = `${e.clientY - offsetY}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                saveWindowState(el);
+            });
+        }
+
+        function saveWindowState(el) {
+            const state = {
+                left: el.style.left,
+                top: el.style.top,
+                width: el.style.width,
+                height: el.style.height
+            };
+            localStorage.setItem(el.querySelector('.title').innerText, JSON.stringify(state));
+        }
+
+        function loadWindowState(el) {
+            const state = JSON.parse(localStorage.getItem(el.querySelector('.title').innerText));
+            if (state) {
+                el.style.left = state.left;
+                el.style.top = state.top;
+                el.style.width = state.width;
+                el.style.height = state.height;
+            }
+        }
+
+        // Initialize camera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+                document.getElementById('camera').srcObject = stream;
+            });
+        }
+
+        // Media player functionality
+        document.getElementById('mediaFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const audioPlayer = document.getElementById('audioPlayer');
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            if (file) {
+                const url = URL.createObjectURL(file);
+
+                if (file.type.startsWith('audio/')) {
+                    audioPlayer.src = url;
+                    audioPlayer.style.display = 'block';
+                    videoPlayer.style.display = 'none';
+                } else if (file.type.startsWith('video/')) {
+                    videoPlayer.src = url;
+                    videoPlayer.style.display = 'block';
+                    audioPlayer.style.display = 'none';
+                }
+            }
+        });
+
+        // Sound effect maker
+        function playSound() {
+            const audio = new Audio('https://www.soundjay.com/button/beep-07.wav');
+            audio.play();
+        }
+    </script>
+</body>
+</html>
