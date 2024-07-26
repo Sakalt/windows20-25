@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 14</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+        #taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #start-button {
+            background-color: #0078d4;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            cursor: pointer;
+        }
+        #desktop {
+            padding: 10px;
+            position: relative;
+        }
+        .window {
+            position: absolute;
+            width: 300px;
+            height: 200px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .window-header {
+            background-color: #0078d4;
+            color: white;
+            padding: 5px;
+            cursor: move;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .window-buttons {
+            display: flex;
+        }
+        .window-buttons button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .window-content {
+            padding: 10px;
+            height: calc(100% - 40px); /* Adjust based on header height */
+            overflow: auto;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="taskbar">
+        <button id="start-button">スタート</button>
+        <div id="taskbar-icons">
+            <button onclick="toggleWindow('notepad')">メモ帳</button>
+            <button onclick="toggleWindow('cmd')">CMD</button>
+            <button onclick="toggleWindow('fileexplorer')">ファイルエクスプローラー</button>
+            <button onclick="toggleWindow('paint')">ペイント</button>
+            <button onclick="toggleWindow('calc')">計算機</button>
+            <button onclick="toggleWindow('calendar')">カレンダー</button>
+            <button onclick="toggleWindow('clock')">時計</button>
+            <button onclick="toggleWindow('timer')">タイマー</button>
+            <button onclick="toggleWindow('widget')">ウィジェット</button>
+        </div>
+    </div>
+
+    <div id="desktop">
+        <!-- Windows -->
+        <div id="notepad" class="window">
+            <div class="window-header">
+                メモ帳
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('notepad')">_</button>
+                    <button onclick="maximizeWindow('notepad')">□</button>
+                    <button onclick="closeWindow('notepad')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://amuhiku.netlify.app"></iframe>
+            </div>
+        </div>
+        <div id="cmd" class="window">
+            <div class="window-header">
+                コマンドプロンプト
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('cmd')">_</button>
+                    <button onclick="maximizeWindow('cmd')">□</button>
+                    <button onclick="closeWindow('cmd')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <textarea rows="10" cols="40" placeholder="コマンドプロンプト..."></textarea>
+            </div>
+        </div>
+        <div id="fileexplorer" class="window">
+            <div class="window-header">
+                ファイルエクスプローラー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('fileexplorer')">_</button>
+                    <button onclick="maximizeWindow('fileexplorer')">□</button>
+                    <button onclick="closeWindow('fileexplorer')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <input type="file" id="fileInput" multiple>
+                <div id="fileList"></div>
+            </div>
+        </div>
+        <div id="paint" class="window">
+            <div class="window-header">
+                ペイント
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('paint')">_</button>
+                    <button onclick="maximizeWindow('paint')">□</button>
+                    <button onclick="closeWindow('paint')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://paint.js.org"></iframe>
+            </div>
+        </div>
+        <div id="calc" class="window">
+            <div class="window-header">
+                計算機
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calc')">_</button>
+                    <button onclick="maximizeWindow('calc')">□</button>
+                    <button onclick="closeWindow('calc')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.calculator.net"></iframe>
+            </div>
+        </div>
+        <div id="calendar" class="window">
+            <div class="window-header">
+                カレンダー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calendar')">_</button>
+                    <button onclick="maximizeWindow('calendar')">□</button>
+                    <button onclick="closeWindow('calendar')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://calendar.google.com"></iframe>
+            </div>
+        </div>
+        <div id="clock" class="window">
+            <div class="window-header">
+                時計
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('clock')">_</button>
+                    <button onclick="maximizeWindow('clock')">□</button>
+                    <button onclick="closeWindow('clock')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://time.is"></iframe>
+            </div>
+        </div>
+        <div id="timer" class="window">
+            <div class="window-header">
+                タイマー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('timer')">_</button>
+                    <button onclick="maximizeWindow('timer')">□</button>
+                    <button onclick="closeWindow('timer')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.timer-tab.com"></iframe>
+            </div>
+        </div>
+        <div id="widget" class="window">
+            <div class="window-header">
+                ウィジェット
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('widget')">_</button>
+                    <button onclick="maximizeWindow('widget')">□</button>
+                    <button onclick="closeWindow('widget')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <!-- ウィジェットの内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = win.style.display === 'none' ? 'block' : 'none';
+            if (win.style.display === 'block') {
+                bringToFront(id);
+            }
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function minimizeWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = 'none';
+        }
+
+        function maximizeWindow(id) {
+            const win = document.getElementById(id);
+            win.style.width = '100%';
+            win.style.height = 'calc(100% - 40px)';
+        }
+
+        function bringToFront(id) {
+            const win = document.getElementById(id);
+            win.style.zIndex = 1000;
+        }
+
+        document.querySelectorAll('.window').forEach(win => {
+            dragElement(win);
+        });
+
+        function dragElement(elmnt) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "-header")) {
+                // if present, the header is where you move the DIV from:
+                document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+            } else {
+                // otherwise, move the DIV from anywhere inside the DIV:
+                elmnt.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves:
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                // stop moving when mouse button is released:
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+</body>
+</html>
