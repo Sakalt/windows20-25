@@ -6,325 +6,319 @@
     <title>Windows 16 (Hill)</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #e0e0e0;
-            color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #282c34;
+            color: black;
         }
-        #bar {
-            position: fixed;
+        #desktop {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+        .window {
+            width: 400px;
+            height: 300px;
+            position: absolute;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            z-index: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .window-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0078D7;
+            color: white;
+            padding: 5px 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: move;
+        }
+        .window-buttons {
+            display: flex;
+        }
+        .window-buttons button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 2px;
+        }
+        .window-content {
+            padding: 10px;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        #start-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 50px;
+            height: 50px;
+            background-image: url('images/15.png'); /* スタートボタンのアイコン画像 */
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+        }
+        #start-menu {
+            position: absolute;
+            bottom: 70px;
+            left: 10px;
+            width: 300px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            padding-top: 40px;
+        }
+        #start-menu-name {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 40px;
-            background: #333;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        #bar #start-button {
-            background: url('images/15.png') no-repeat center center;
-            background-size: contain;
-            width: 30px;
-            height: 30px;
-            border: none;
-            cursor: pointer;
-        }
-        #bar #clock {
-            margin-left: auto;
-            padding: 0 20px;
-        }
-        #bar button {
-            margin-left: 10px;
-            background: #555;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #desktop {
-            position: relative;
-            width: 100%;
-            height: calc(100vh - 40px);
-            background: #f0f0f0;
-            overflow: auto;
-        }
-        #desktop .file {
-            width: 100px;
-            height: 100px;
-            background: url('images/textfile.png') no-repeat center center;
-            background-size: contain;
-            display: inline-block;
-            text-align: center;
-            vertical-align: top;
-            margin: 10px;
-            cursor: pointer;
-        }
-        #desktop .file span {
-            display: block;
-            color: #000;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        .window {
-            position: absolute;
-            border: 1px solid #ccc;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1000;
-            width: 400px;
-            height: 300px;
-        }
-        .window-header {
-            background: #444;
-            color: #fff;
-            padding: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .window-buttons button {
-            background: #666;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 14px;
+            background-color: #0078D7;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
         }
-        .window-buttons button:hover {
-            background: #999;
-        }
-        .window.maximized {
-            width: 100vw;
-            height: 100vh;
-            top: 0;
-            left: 0;
-        }
-        .window.maximized .window-header {
-            background: #555;
-        }
-        .mini-tools {
+        #start-menu button {
+            width: 100%;
             padding: 10px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .mini-tools button {
-            margin: 5px;
-        }
-        .window .window-header .window-buttons button {
-            background: #666;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-        }
-        .window .window-header .window-buttons button.minimize {
-            background: #ffcc00;
-        }
-        .window .window-header .window-buttons button.maximize {
-            background: #00cc00;
-        }
-        .window .window-header .window-buttons button.close {
-            background: #cc0000;
+            background-color: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
         }
         #context-menu {
-            display: none;
             position: absolute;
-            background: #fff;
+            background-color: #333;
+            color: white;
             border: 1px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
             z-index: 1000;
         }
         #context-menu ul {
             list-style: none;
-            padding: 0;
             margin: 0;
+            padding: 5px 0;
         }
-        #context-menu li {
+        #context-menu ul li {
             padding: 5px 10px;
             cursor: pointer;
         }
-        #context-menu li:hover {
-            background: #f0f0f0;
+        #context-menu ul li:hover {
+            background-color: #555;
+        }
+        #text-files {
+            display: flex;
+            flex-direction: column;
+        }
+        #text-files .file {
+            background-color: #444;
+            margin: 5px;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .file-list-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .file-list-item:hover {
+            background-color: #f0f0f0;
+        }
+        .window-header .window-buttons button {
+            border-radius: 50%;
+            background: linear-gradient(to bottom right, #aaa, #333);
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 14px;
+        }
+        #text-file-1, #text-file-2 {
+            position: absolute;
+            width: 200px;
+            height: 100px;
+            background: url('images/textfile.png') no-repeat center center;
+            background-size: cover;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
-    <div id="bar">
-        <button id="start-button"></button>
-        <button id="calc-button">計算機</button>
-        <button id="minitools-button">ミニツール</button>
-        <button id="file-explorer-button">ファイルエクスプローラー</button>
-        <button id="app1-button">アプリ1</button>
-        <button id="app2-button">アプリ2</button>
-        <button id="app3-button">アプリ3</button>
-        <button id="app4-button">アプリ4</button>
-        <div id="clock"></div>
-    </div>
-    <div id="desktop">
-        <!-- テキストファイルはここに表示 -->
-    </div>
-    <div id="minitools-window" class="window">
-        <div class="window-header">
-            <span>ミニツール</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('minitools-window')">−</button>
-                <button class="maximize" onclick="maximizeWindow('minitools-window')">⬜</button>
-                <button class="close" onclick="closeWindow('minitools-window')">×</button>
+    <div id="desktop" oncontextmenu="showContextMenu(event)">
+        <!-- アプリウィンドウ -->
+        <div id="cmd" class="window">
+            <div class="window-header">
+                <span>CMD</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('cmd')">−</button>
+                    <button onclick="maximizeWindow('cmd')">⬜</button>
+                    <button onclick="closeWindow('cmd')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <textarea style="width: 100%; height: 100%;"></textarea>
             </div>
         </div>
-        <div class="window-content mini-tools">
-            <button onclick="alert('ツール1')">ツール1</button>
-            <button onclick="alert('ツール2')">ツール2</button>
-            <button onclick="alert('ツール3')">ツール3</button>
-        </div>
-    </div>
-    <div id="file-explorer" class="window">
-        <div class="window-header">
-            <span>ファイルエクスプローラー</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('file-explorer')">−</button>
-                <button class="maximize" onclick="maximizeWindow('file-explorer')">⬜</button>
-                <button class="close" onclick="closeWindow('file-explorer')">×</button>
+        <div id="fileexplorer" class="window">
+            <div class="window-header">
+                <span>ファイルエクスプローラー</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('fileexplorer')">−</button>
+                    <button onclick="maximizeWindow('fileexplorer')">⬜</button>
+                    <button onclick="closeWindow('fileexplorer')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <input type="file" id="fileUpload" multiple>
+                <div id="fileList"></div>
             </div>
         </div>
-        <div class="window-content">
-            <input type="file" id="fileUpload" multiple>
-            <div id="fileList"></div>
-        </div>
-    </div>
-    <div id="text-editor" class="window">
-        <div class="window-header">
-            <span>テキストエディタ</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('text-editor')">−</button>
-                <button class="maximize" onclick="maximizeWindow('text-editor')">⬜</button>
-                <button class="close" onclick="closeWindow('text-editor')">×</button>
+        <div id="paint" class="window">
+            <div class="window-header">
+                <span>ペイント</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('paint')">−</button>
+                    <button onclick="maximizeWindow('paint')">⬜</button>
+                    <button onclick="closeWindow('paint')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://paint.js.org" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
         </div>
-        <div class="window-content">
-            <textarea id="editor" style="width: 100%; height: 80%;"></textarea>
-            <button onclick="saveTextFile()">保存</button>
-        </div>
-    </div>
-    <div id="calculator" class="window">
-        <div class="window-header">
-            <span>電卓</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('calculator')">−</button>
-                <button class="maximize" onclick="maximizeWindow('calculator')">⬜</button>
-                <button class="close" onclick="closeWindow('calculator')">×</button>
+        <div id="calc" class="window">
+            <div class="window-header">
+                <span>計算機</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calc')">−</button>
+                    <button onclick="maximizeWindow('calc')">⬜</button>
+                    <button onclick="closeWindow('calc')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.calculator.net" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
         </div>
-        <div class="window-content">
-            <input type="text" id="calc-display" readonly>
-            <div id="calc-buttons">
-                <button onclick="appendCalcValue('1')">1</button>
-                <button onclick="appendCalcValue('2')">2</button>
-                <button onclick="appendCalcValue('3')">3</button>
-                <button onclick="appendCalcValue('+')">+</button>
-                <button onclick="appendCalcValue('4')">4</button>
-                <button onclick="appendCalcValue('5')">5</button>
-                <button onclick="appendCalcValue('6')">6</button>
-                <button onclick="appendCalcValue('-')">-</button>
-                <button onclick="appendCalcValue('7')">7</button>
-                <button onclick="appendCalcValue('8')">8</button>
-                <button onclick="appendCalcValue('9')">9</button>
-                <button onclick="appendCalcValue('*')">*</button>
-                <button onclick="appendCalcValue('0')">0</button>
-                <button onclick="appendCalcValue('.')">.</button>
-                <button onclick="calculateResult()">=</button>
-                <button onclick="appendCalcValue('/')">/</button>
-                <button onclick="clearCalcDisplay()">C</button>
+        <div id="calendar" class="window">
+            <div class="window-header">
+                <span>カレンダー</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calendar')">−</button>
+                    <button onclick="maximizeWindow('calendar')">⬜</button>
+                    <button onclick="closeWindow('calendar')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://calendar.google.com" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
         </div>
-    </div>
-    <div id="version-info" class="window">
-        <div class="window-header">
-            <span>バージョン情報</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('version-info')">−</button>
-                <button class="maximize" onclick="maximizeWindow('version-info')">⬜</button>
-                <button class="close" onclick="closeWindow('version-info')">×</button>
+        <div id="settings" class="window">
+            <div class="window-header">
+                <span>設定</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('settings')">−</button>
+                    <button onclick="maximizeWindow('settings')">⬜</button>
+                    <button onclick="closeWindow('settings')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <label for="language">言語:</label>
+                <select id="language">
+                    <option value="ja">日本語</option>
+                    <option value="en">英語</option>
+                </select><br><br>
+                <label for="theme">テーマ:</label>
+                <select id="theme">
+                    <option value="light">ライト</option>
+                    <option value="dark">ダーク</option>
+                </select><br><br>
+                <label for="username">ユーザー名:</label>
+                <input type="text" id="username"><br><br>
+                <button onclick="saveSettings()">保存</button>
             </div>
         </div>
-        <div class="window-content">
-            <p>Windows 16 (Hill) - バージョン1.0</p>
-            <p>開発者: あなたの名前</p>
+
+        <!-- スタートボタンとメニュー -->
+        <button id="start-button" onclick="toggleStartMenu()"></button>
+        <div id="start-menu">
+            <div id="start-menu-name">スタートメニュー</div>
+            <button onclick="openWindow('cmd')">コマンドプロンプト</button>
+            <button onclick="openWindow('fileexplorer')">ファイルエクスプローラー</button>
+            <button onclick="openWindow('paint')">ペイント</button>
+            <button onclick="openWindow('calc')">計算機</button>
+            <button onclick="openWindow('calendar')">カレンダー</button>
+            <button onclick="openWindow('settings')">設定</button>
+        </div>
+
+        <!-- テキストファイル -->
+        <div id="text-files">
+            <div class="file" id="text-file-1">テキストファイル1</div>
+            <div class="file" id="text-file-2">テキストファイル2</div>
+        </div>
+
+        <!-- コンテキストメニュー -->
+        <div id="context-menu">
+            <ul>
+                <li onclick="openWindow('fileexplorer')">ファイルエクスプローラー</li>
+                <li onclick="openWindow('paint')">ペイント</li>
+                <li onclick="openWindow('calc')">計算機</li>
+                <li onclick="openWindow('settings')">設定</li>
+            </ul>
         </div>
     </div>
-    <!-- 新しいアプリのウィンドウ -->
-    <div id="app1-window" class="window">
-        <div class="window-header">
-            <span>アプリ1</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('app1-window')">−</button>
-                <button class="maximize" onclick="maximizeWindow('app1-window')">⬜</button>
-                <button class="close" onclick="closeWindow('app1-window')">×</button>
-            </div>
-        </div>
-        <div class="window-content">
-            <p>アプリ1の内容</p>
-        </div>
-    </div>
-    <div id="app2-window" class="window">
-        <div class="window-header">
-            <span>アプリ2</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('app2-window')">−</button>
-                <button class="maximize" onclick="maximizeWindow('app2-window')">⬜</button>
-                <button class="close" onclick="closeWindow('app2-window')">×</button>
-            </div>
-        </div>
-        <div class="window-content">
-            <p>アプリ2の内容</p>
-        </div>
-    </div>
-    <div id="app3-window" class="window">
-        <div class="window-header">
-            <span>アプリ3</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('app3-window')">−</button>
-                <button class="maximize" onclick="maximizeWindow('app3-window')">⬜</button>
-                <button class="close" onclick="closeWindow('app3-window')">×</button>
-            </div>
-        </div>
-        <div class="window-content">
-            <p>アプリ3の内容</p>
-        </div>
-    </div>
-    <div id="app4-window" class="window">
-        <div class="window-header">
-            <span>アプリ4</span>
-            <div class="window-buttons">
-                <button class="minimize" onclick="minimizeWindow('app4-window')">−</button>
-                <button class="maximize" onclick="maximizeWindow('app4-window')">⬜</button>
-                <button class="close" onclick="closeWindow('app4-window')">×</button>
-            </div>
-        </div>
-        <div class="window-content">
-            <p>アプリ4の内容</p>
-        </div>
-    </div>
+
     <script>
-        // ウィンドウ操作関数
-        function showWindow(id) {
-            document.getElementById(id).style.display = 'block';
+        // ウィンドウの位置とドラッグの処理
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, startLeft, startTop;
+
+            element.addEventListener('mousedown', function (e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startLeft = parseInt(window.getComputedStyle(element).left, 10);
+                startTop = parseInt(window.getComputedStyle(element).top, 10);
+            });
+
+            document.addEventListener('mousemove', function (e) {
+                if (isDragging) {
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    element.style.left = `${startLeft + dx}px`;
+                    element.style.top = `${startTop + dy}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', function () {
+                isDragging = false;
+            });
         }
 
-        function hideWindow(id) {
-            document.getElementById(id).style.display = 'none';
+        makeDraggable(document.querySelectorAll('.window'));
+
+        // ウィンドウ操作
+        function openWindow(id) {
+            document.getElementById(id).style.display = 'block';
         }
 
         function minimizeWindow(id) {
@@ -332,77 +326,52 @@
         }
 
         function maximizeWindow(id) {
-            let win = document.getElementById(id);
-            if (win.classList.contains('maximized')) {
-                win.classList.remove('maximized');
+            const win = document.getElementById(id);
+            if (win.style.width === '100vw' && win.style.height === '100vh') {
+                win.style.width = '400px';
+                win.style.height = '300px';
+                win.style.left = '50%';
+                win.style.top = '50%';
+                win.style.transform = 'translate(-50%, -50%)';
             } else {
-                win.classList.add('maximized');
+                win.style.width = '100vw';
+                win.style.height = '100vh';
+                win.style.left = '0';
+                win.style.top = '0';
+                win.style.transform = 'none';
             }
         }
 
         function closeWindow(id) {
-            document.getElementById(id).remove();
+            document.getElementById(id).style.display = 'none';
         }
 
-        function saveTextFile() {
-            const text = document.getElementById('editor').value;
-            const blob = new Blob([text], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'file.txt';
-            a.click();
-            URL.revokeObjectURL(url);
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('start-menu');
+            startMenu.style.display = startMenu.style.display === 'none' || startMenu.style.display === '' ? 'block' : 'none';
         }
 
-        function appendCalcValue(value) {
-            document.getElementById('calc-display').value += value;
+        function showContextMenu(e) {
+            e.preventDefault();
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.top = `${e.clientY}px`;
         }
 
-        function clearCalcDisplay() {
-            document.getElementById('calc-display').value = '';
+        document.addEventListener('click', function () {
+            document.getElementById('context-menu').style.display = 'none';
+        });
+
+        function saveSettings() {
+            const language = document.getElementById('language').value;
+            const theme = document.getElementById('theme').value;
+            const username = document.getElementById('username').value;
+            localStorage.setItem('language', language);
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('username', username);
+            alert('設定が保存されました');
         }
-
-        function calculateResult() {
-            const display = document.getElementById('calc-display');
-            try {
-                display.value = eval(display.value);
-            } catch {
-                display.value = 'エラー';
-            }
-        }
-
-        // アプリのウィンドウを作成
-        function createAppWindow(id, title, content) {
-            const windowHTML = `
-                <div id="${id}" class="window">
-                    <div class="window-header">
-                        <span>${title}</span>
-                        <div class="window-buttons">
-                            <button class="minimize" onclick="minimizeWindow('${id}')">−</button>
-                            <button class="maximize" onclick="maximizeWindow('${id}')">⬜</button>
-                            <button class="close" onclick="closeWindow('${id}')">×</button>
-                        </div>
-                    </div>
-                    <div class="window-content">
-                        ${content}
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', windowHTML);
-        }
-
-        // 新しいアプリのウィンドウを作成
-        createAppWindow('app1-window', 'アプリ1', '<p>アプリ1の内容</p>');
-        createAppWindow('app2-window', 'アプリ2', '<p>アプリ2の内容</p>');
-        createAppWindow('app3-window', 'アプリ3', '<p>アプリ3の内容</p>');
-        createAppWindow('app4-window', 'アプリ4', '<p>アプリ4の内容</p>');
-
-        // 各アプリのボタンを追加
-        document.getElementById('app1-button').addEventListener('click', () => showWindow('app1-window'));
-        document.getElementById('app2-button').addEventListener('click', () => showWindow('app2-window'));
-        document.getElementById('app3-button').addEventListener('click', () => showWindow('app3-window'));
-        document.getElementById('app4-button').addEventListener('click', () => showWindow('app4-window'));
     </script>
 </body>
 </html>
