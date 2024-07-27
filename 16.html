@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 16 (Hill)</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #e0e0e0;
+            color: #000;
+        }
+        #bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #333;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        #bar #start-button {
+            background: url('images/15.png') no-repeat center center;
+            background-size: contain;
+            width: 30px;
+            height: 30px;
+            border: none;
+            cursor: pointer;
+        }
+        #bar #clock {
+            margin-left: auto;
+            padding: 0 20px;
+        }
+        #bar #calc-button,
+        #bar #minitools-button,
+        #bar #file-explorer-button {
+            margin-left: 10px;
+            background: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #desktop {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 40px);
+            background: #f0f0f0;
+            overflow: auto;
+        }
+        #desktop .file {
+            width: 100px;
+            height: 100px;
+            background: url('images/textfile.png') no-repeat center center;
+            background-size: contain;
+            display: inline-block;
+            text-align: center;
+            vertical-align: top;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #desktop .file span {
+            display: block;
+            color: #000;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .window {
+            position: absolute;
+            border: 1px solid #ccc;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            width: 400px;
+            height: 300px;
+        }
+        .window-header {
+            background: #444;
+            color: #fff;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .window-buttons button {
+            background: #666;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .window-buttons button:hover {
+            background: #999;
+        }
+        #context-menu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        #context-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #context-menu li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #context-menu li:hover {
+            background: #f0f0f0;
+        }
+        .window.maximized {
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+        }
+        .window.maximized .window-header {
+            background: #555;
+        }
+        .mini-tools {
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .mini-tools button {
+            margin: 5px;
+        }
+        .window .window-header .window-buttons button {
+            background: #666;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+        }
+        .window .window-header .window-buttons button.minimize {
+            background: #ffcc00;
+        }
+        .window .window-header .window-buttons button.maximize {
+            background: #00cc00;
+        }
+        .window .window-header .window-buttons button.close {
+            background: #cc0000;
+        }
+        .window-content {
+            padding: 10px;
+        }
+        #calc-buttons button {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="bar">
+        <button id="start-button"></button>
+        <button id="calc-button">計算機</button>
+        <button id="minitools-button">ミニツール</button>
+        <button id="file-explorer-button">ファイルエクスプローラー</button>
+        <div id="clock"></div>
+    </div>
+    <div id="desktop">
+        <!-- テキストファイルはここに表示 -->
+    </div>
+    <div id="minitools-window" class="window">
+        <div class="window-header">
+            <span>ミニツール</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('minitools-window')">−</button>
+                <button class="maximize" onclick="maximizeWindow('minitools-window')">⬜</button>
+                <button class="close" onclick="closeWindow('minitools-window')">×</button>
+            </div>
+        </div>
+        <div class="window-content mini-tools">
+            <!-- ミニツールのボタンを追加 -->
+            <button onclick="alert('ツール1')">ツール1</button>
+            <button onclick="alert('ツール2')">ツール2</button>
+            <button onclick="alert('ツール3')">ツール3</button>
+        </div>
+    </div>
+    <div id="file-explorer" class="window">
+        <div class="window-header">
+            <span>ファイルエクスプローラー</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('file-explorer')">−</button>
+                <button class="maximize" onclick="maximizeWindow('file-explorer')">⬜</button>
+                <button class="close" onclick="closeWindow('file-explorer')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <input type="file" id="fileUpload" multiple>
+            <div id="fileList"></div>
+        </div>
+    </div>
+    <div id="text-editor" class="window">
+        <div class="window-header">
+            <span>テキストエディタ</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('text-editor')">−</button>
+                <button class="maximize" onclick="maximizeWindow('text-editor')">⬜</button>
+                <button class="close" onclick="closeWindow('text-editor')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <textarea id="editor" style="width: 100%; height: 80%;"></textarea>
+            <button onclick="saveTextFile()">保存</button>
+        </div>
+    </div>
+    <div id="calculator" class="window">
+        <div class="window-header">
+            <span>電卓</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('calculator')">−</button>
+                <button class="maximize" onclick="maximizeWindow('calculator')">⬜</button>
+                <button class="close" onclick="closeWindow('calculator')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <input type="text" id="calc-display" readonly>
+            <div id="calc-buttons">
+                <!-- 電卓のボタンを追加 -->
+                <button onclick="appendCalcValue('1')">1</button>
+                <button onclick="appendCalcValue('2')">2</button>
+                <button onclick="appendCalcValue('3')">3</button>
+                <button onclick="appendCalcValue('+')">+</button>
+                <button onclick="appendCalcValue('4')">4</button>
+                <button onclick="appendCalcValue('5')">5</button>
+                <button onclick="appendCalcValue('6')">6</button>
+                <button onclick="appendCalcValue('-')">-</button>
+                <button onclick="appendCalcValue('7')">7</button>
+                <button onclick="appendCalcValue('8')">8</button>
+                <button onclick="appendCalcValue('9')">9</button>
+                <button onclick="appendCalcValue('*')">*</button>
+                <button onclick="appendCalcValue('0')">0</button>
+                <button onclick="appendCalcValue('.')">.</button>
+                <button onclick="calculateResult()">=</button>
+                <button onclick="appendCalcValue('/')">/</button>
+            </div>
+        </div>
+    </div>
+    <div id="version-info" class="window">
+        <div class="window-header">
+            <span>バージョン情報</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('version-info')">−</button>
+                <button class="maximize" onclick="maximizeWindow('version-info')">⬜</button>
+                <button class="close" onclick="closeWindow('version-info')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <p>Windows 16 (Hill) </p>
+        </div>
+    </div>
+    <script>
+        const startButton = document.getElementById('start-button');
+        const calcButton = document.getElementById('calc-button');
+        const minitoolsButton = document.getElementById('minitools-button');
+        const fileExplorerButton = document.getElementById('file-explorer-button');
+        const clock = document.getElementById('clock');
+        const fileExplorer = document.getElementById('file-explorer');
+        const textEditor = document.getElementById('text-editor');
+        const calculator = document.getElementById('calculator');
+        const minitools = document.getElementById('minitools-window');
+        const versionInfo = document.getElementById('version-info');
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clock.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        startButton.onclick = function() {
+            alert('スタートボタンがクリックされました');
+        };
+
+        calcButton.onclick = function() {
+            showWindow('calculator');
+        };
+
+        minitoolsButton.onclick = function() {
+            showWindow('minitools-window');
+        };
+
+        fileExplorerButton.onclick = function() {
+            showWindow('file-explorer');
+        };
+
+        function showWindow(id) {
+            document.querySelectorAll('.window').forEach(win => win.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function minimizeWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = 'none';
+        }
+
+        function maximizeWindow(id) {
+            const win = document.getElementById(id);
+            if (win.classList.contains('maximized')) {
+                win.classList.remove('maximized');
+            } else {
+                win.classList.add('maximized');
+            }
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function appendCalcValue(value) {
+            const display = document.getElementById('calc-display');
+            display.value += value;
+        }
+
+        function calculateResult() {
+            const display = document.getElementById('calc-display');
+            try {
+                display.value = eval(display.value);
+            } catch (e) {
+                display.value = 'エラー';
+            }
+        }
+
+        function saveTextFile() {
+            const text = document.getElementById('editor').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'file.txt';
+            link.click();
+        }
+    </script>
+</body>
+</html>
