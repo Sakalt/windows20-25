@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 17</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #282c34;
+            color: white;
+        }
+        #desktop {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-image: url('background.png');
+            background-size: cover;
+        }
+        .window {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            z-index: 0;
+        }
+        .window-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0078D7;
+            color: white;
+            padding: 5px 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: move;
+        }
+        .window-buttons button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 2px;
+        }
+        .window-content {
+            padding: 10px;
+        }
+        #start-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 50px;
+            height: 50px;
+            background-image: url('start-icon.png'); /* アイコン画像を指定 */
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+        }
+        #start-menu {
+            position: absolute;
+            bottom: 70px;
+            left: 10px;
+            width: 500px;
+            height: 500px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+        }
+        #start-menu button {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+        }
+        #context-menu {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            border: 1px solid #ccc;
+            display: none;
+            z-index: 1000;
+        }
+        #context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 5px 0;
+        }
+        #context-menu ul li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #context-menu ul li:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="desktop" oncontextmenu="showContextMenu(event)">
+        <!-- アプリウィンドウ -->
+        <div id="cmd" class="window">
+            <div class="window-header">
+                CMD
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('cmd')">🗕</button>
+                    <button onclick="maximizeWindow('cmd')">🗖</button>
+                    <button onclick="closeWindow('cmd')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <textarea style="width: 100%; height: 100%;"></textarea>
+            </div>
+        </div>
+        <div id="fileexplorer" class="window">
+            <div class="window-header">
+                ファイルエクスプローラー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('fileexplorer')">🗕</button>
+                    <button onclick="maximizeWindow('fileexplorer')">🗖</button>
+                    <button onclick="closeWindow('fileexplorer')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <input type="file" id="fileUpload" multiple>
+                <div id="fileList"></div>
+            </div>
+        </div>
+        <div id="paint" class="window">
+            <div class="window-header">
+                ペイント
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('paint')">🗕</button>
+                    <button onclick="maximizeWindow('paint')">🗖</button>
+                    <button onclick="closeWindow('paint')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://paint.js.org" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="calc" class="window">
+            <div class="window-header">
+                計算機
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calc')">🗕</button>
+                    <button onclick="maximizeWindow('calc')">🗖</button>
+                    <button onclick="closeWindow('calc')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.calculator.net" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="calendar" class="window">
+            <div class="window-header">
+                カレンダー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calendar')">🗕</button>
+                    <button onclick="maximizeWindow('calendar')">🗖</button>
+                    <button onclick="closeWindow('calendar')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://calendar.google.com" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="clock" class="window">
+            <div class="window-header">
+                時計
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('clock')">🗕</button>
+                    <button onclick="maximizeWindow('clock')">🗖</button>
+                    <button onclick="closeWindow('clock')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.timeanddate.com" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="timer" class="window">
+            <div class="window-header">
+                タイマー
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('timer')">🗕</button>
+                    <button onclick="maximizeWindow('timer')">🗖</button>
+                    <button onclick="closeWindow('timer')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.online-stopwatch.com/timer" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="settings" class="window">
+            <div class="window-header">
+                設定
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('settings')">🗕</button>
+                    <button onclick="maximizeWindow('settings')">🗖</button>
+                    <button onclick="closeWindow('settings')">🗙</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="setting-item">
+                    <label for="language">言語:</label>
+                    <select id="language">
+                        <option value="ja">日本語</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="theme">テーマ:</label>
+                    <select id="theme">
+                        <option value="light">ライト</option>
+                        <option value="dark">ダーク</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="username">ユーザー名:</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="setting-item">
+                    <label for="icon">アイコン:</label>
+                    <input type="file" id="icon">
+                </div>
+            </div>
+        </div>
+
+        <!-- スタートメニュー -->
+        <button id="start-button"></button>
+        <div id="start-menu">
+            <button onclick="openWindow('cmd')">CMD</button>
+            <button onclick="openWindow('fileexplorer')">ファイルエクスプローラー</button>
+            <button onclick="openWindow('paint')">ペイント</button>
+            <button onclick="openWindow('calc')">計算機</button>
+            <button onclick="openWindow('calendar')">カレンダー</button>
+            <button onclick="openWindow('clock')">時計</button>
+            <button onclick="openWindow('timer')">タイマー</button>
+            <button onclick="openWindow('settings')">設定</button>
+        </div>
+
+        <!-- 右クリックメニュー -->
+        <div id="context-menu">
+            <ul>
+                <li onclick="createTextFile()">テキストファイル作成</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const windows = document.querySelectorAll('.window');
+        const startButton = document.getElementById('start-button');
+        const startMenu = document.getElementById('start-menu');
+        const contextMenu = document.getElementById('context-menu');
+
+        // ウィンドウを開く
+        function openWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'block';
+            window.style.zIndex = ++maxZIndex;
+        }
+
+        // ウィンドウを最小化
+        function minimizeWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'none';
+        }
+
+        // ウィンドウを最大化
+        function maximizeWindow(id) {
+            const window = document.getElementById(id);
+            window.classList.toggle('maximized');
+        }
+
+        // ウィンドウを閉じる
+        function closeWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'none';
+        }
+
+        // スタートボタンのクリックイベント
+        startButton.addEventListener('click', () => {
+            startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // ドラッグ＆ドロップ
+        windows.forEach(win => {
+            const header = win.querySelector('.window-header');
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            header.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - win.offsetLeft;
+                offsetY = e.clientY - win.offsetTop;
+                win.style.zIndex = ++maxZIndex;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    win.style.left = `${e.clientX - offsetX}px`;
+                    win.style.top = `${e.clientY - offsetY}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        });
+
+        // 右クリックメニュー
+        function showContextMenu(event) {
+            event.preventDefault();
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${event.clientX}px`;
+            contextMenu.style.top = `${event.clientY}px`;
+        }
+
+        document.addEventListener('click', () => {
+            contextMenu.style.display = 'none';
+        });
+
+        // テキストファイル作成
+        function createTextFile() {
+            const textFile = document.createElement('div');
+            textFile.textContent = '新しいテキストファイル.txt';
+            textFile.style.border = '1px solid #ccc';
+            textFile.style.padding = '5px';
+            textFile.style.margin = '5px';
+            document.getElementById('desktop').appendChild(textFile);
+        }
+
+        // ファイルアップロード
+        const fileUpload = document.getElementById('fileUpload');
+        const fileList = document.getElementById('fileList');
+
+        fileUpload.addEventListener('change', (event) => {
+            fileList.innerHTML = '';
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const fileItem = document.createElement('div');
+                fileItem.textContent = files[i].name;
+                fileList.appendChild(fileItem);
+            }
+        });
+
+        // ローカルストレージの保存と読み込み
+        const settings = document.getElementById('settings');
+        const languageSelect = document.getElementById('language');
+        const themeSelect = document.getElementById('theme');
+        const usernameInput = document.getElementById('username');
+
+        // 設定の保存
+        function saveSettings() {
+            localStorage.setItem('language', languageSelect.value);
+            localStorage.setItem('theme', themeSelect.value);
+            localStorage.setItem('username', usernameInput.value);
+        }
+
+        // 設定の読み込み
+        function loadSettings() {
+            if (localStorage.getItem('language')) {
+                languageSelect.value = localStorage.getItem('language');
+            }
+            if (localStorage.getItem('theme')) {
+                themeSelect.value = localStorage.getItem('theme');
+            }
+            if (localStorage.getItem('username')) {
+                usernameInput.value = localStorage.getItem('username');
+            }
+        }
+
+        // ページ読み込み時に設定を読み込む
+        window.onload = loadSettings;
+    </script>
+</body>
+</html>
