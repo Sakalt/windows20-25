@@ -37,9 +37,7 @@
             margin-left: auto;
             padding: 0 20px;
         }
-        #bar #calc-button,
-        #bar #minitools-button,
-        #bar #file-explorer-button {
+        #bar button {
             margin-left: 10px;
             background: #555;
             color: #fff;
@@ -106,26 +104,6 @@
         .window-buttons button:hover {
             background: #999;
         }
-        #context-menu {
-            display: none;
-            position: absolute;
-            background: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        #context-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #context-menu li {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        #context-menu li:hover {
-            background: #f0f0f0;
-        }
         .window.maximized {
             width: 100vw;
             height: 100vh;
@@ -160,11 +138,25 @@
         .window .window-header .window-buttons button.close {
             background: #cc0000;
         }
-        .window-content {
-            padding: 10px;
+        #context-menu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
-        #calc-buttons button {
-            margin: 2px;
+        #context-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #context-menu li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #context-menu li:hover {
+            background: #f0f0f0;
         }
     </style>
 </head>
@@ -174,6 +166,10 @@
         <button id="calc-button">計算機</button>
         <button id="minitools-button">ミニツール</button>
         <button id="file-explorer-button">ファイルエクスプローラー</button>
+        <button id="app1-button">アプリ1</button>
+        <button id="app2-button">アプリ2</button>
+        <button id="app3-button">アプリ3</button>
+        <button id="app4-button">アプリ4</button>
         <div id="clock"></div>
     </div>
     <div id="desktop">
@@ -189,7 +185,6 @@
             </div>
         </div>
         <div class="window-content mini-tools">
-            <!-- ミニツールのボタンを追加 -->
             <button onclick="alert('ツール1')">ツール1</button>
             <button onclick="alert('ツール2')">ツール2</button>
             <button onclick="alert('ツール3')">ツール3</button>
@@ -235,7 +230,6 @@
         <div class="window-content">
             <input type="text" id="calc-display" readonly>
             <div id="calc-buttons">
-                <!-- 電卓のボタンを追加 -->
                 <button onclick="appendCalcValue('1')">1</button>
                 <button onclick="appendCalcValue('2')">2</button>
                 <button onclick="appendCalcValue('3')">3</button>
@@ -252,6 +246,7 @@
                 <button onclick="appendCalcValue('.')">.</button>
                 <button onclick="calculateResult()">=</button>
                 <button onclick="appendCalcValue('/')">/</button>
+                <button onclick="clearCalcDisplay()">C</button>
             </div>
         </div>
     </div>
@@ -265,59 +260,79 @@
             </div>
         </div>
         <div class="window-content">
-            <p>Windows 16 (Hill) </p>
+            <p>Windows 16 (Hill) - バージョン1.0</p>
+            <p>開発者: あなたの名前</p>
+        </div>
+    </div>
+    <!-- 新しいアプリのウィンドウ -->
+    <div id="app1-window" class="window">
+        <div class="window-header">
+            <span>アプリ1</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('app1-window')">−</button>
+                <button class="maximize" onclick="maximizeWindow('app1-window')">⬜</button>
+                <button class="close" onclick="closeWindow('app1-window')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <p>アプリ1の内容</p>
+        </div>
+    </div>
+    <div id="app2-window" class="window">
+        <div class="window-header">
+            <span>アプリ2</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('app2-window')">−</button>
+                <button class="maximize" onclick="maximizeWindow('app2-window')">⬜</button>
+                <button class="close" onclick="closeWindow('app2-window')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <p>アプリ2の内容</p>
+        </div>
+    </div>
+    <div id="app3-window" class="window">
+        <div class="window-header">
+            <span>アプリ3</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('app3-window')">−</button>
+                <button class="maximize" onclick="maximizeWindow('app3-window')">⬜</button>
+                <button class="close" onclick="closeWindow('app3-window')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <p>アプリ3の内容</p>
+        </div>
+    </div>
+    <div id="app4-window" class="window">
+        <div class="window-header">
+            <span>アプリ4</span>
+            <div class="window-buttons">
+                <button class="minimize" onclick="minimizeWindow('app4-window')">−</button>
+                <button class="maximize" onclick="maximizeWindow('app4-window')">⬜</button>
+                <button class="close" onclick="closeWindow('app4-window')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <p>アプリ4の内容</p>
         </div>
     </div>
     <script>
-        const startButton = document.getElementById('start-button');
-        const calcButton = document.getElementById('calc-button');
-        const minitoolsButton = document.getElementById('minitools-button');
-        const fileExplorerButton = document.getElementById('file-explorer-button');
-        const clock = document.getElementById('clock');
-        const fileExplorer = document.getElementById('file-explorer');
-        const textEditor = document.getElementById('text-editor');
-        const calculator = document.getElementById('calculator');
-        const minitools = document.getElementById('minitools-window');
-        const versionInfo = document.getElementById('version-info');
-
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            clock.textContent = `${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        startButton.onclick = function() {
-            alert('スタートボタンがクリックされました');
-        };
-
-        calcButton.onclick = function() {
-            showWindow('calculator');
-        };
-
-        minitoolsButton.onclick = function() {
-            showWindow('minitools-window');
-        };
-
-        fileExplorerButton.onclick = function() {
-            showWindow('file-explorer');
-        };
-
+        // ウィンドウ操作関数
         function showWindow(id) {
-            document.querySelectorAll('.window').forEach(win => win.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         }
 
+        function hideWindow(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
         function minimizeWindow(id) {
-            const win = document.getElementById(id);
-            win.style.display = 'none';
+            document.getElementById(id).style.display = 'none';
         }
 
         function maximizeWindow(id) {
-            const win = document.getElementById(id);
+            let win = document.getElementById(id);
             if (win.classList.contains('maximized')) {
                 win.classList.remove('maximized');
             } else {
@@ -326,31 +341,68 @@
         }
 
         function closeWindow(id) {
-            document.getElementById(id).style.display = 'none';
+            document.getElementById(id).remove();
+        }
+
+        function saveTextFile() {
+            const text = document.getElementById('editor').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'file.txt';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function appendCalcValue(value) {
-            const display = document.getElementById('calc-display');
-            display.value += value;
+            document.getElementById('calc-display').value += value;
+        }
+
+        function clearCalcDisplay() {
+            document.getElementById('calc-display').value = '';
         }
 
         function calculateResult() {
             const display = document.getElementById('calc-display');
             try {
                 display.value = eval(display.value);
-            } catch (e) {
+            } catch {
                 display.value = 'エラー';
             }
         }
 
-        function saveTextFile() {
-            const text = document.getElementById('editor').value;
-            const blob = new Blob([text], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'file.txt';
-            link.click();
+        // アプリのウィンドウを作成
+        function createAppWindow(id, title, content) {
+            const windowHTML = `
+                <div id="${id}" class="window">
+                    <div class="window-header">
+                        <span>${title}</span>
+                        <div class="window-buttons">
+                            <button class="minimize" onclick="minimizeWindow('${id}')">−</button>
+                            <button class="maximize" onclick="maximizeWindow('${id}')">⬜</button>
+                            <button class="close" onclick="closeWindow('${id}')">×</button>
+                        </div>
+                    </div>
+                    <div class="window-content">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', windowHTML);
         }
+
+        // 新しいアプリのウィンドウを作成
+        createAppWindow('app1-window', 'アプリ1', '<p>アプリ1の内容</p>');
+        createAppWindow('app2-window', 'アプリ2', '<p>アプリ2の内容</p>');
+        createAppWindow('app3-window', 'アプリ3', '<p>アプリ3の内容</p>');
+        createAppWindow('app4-window', 'アプリ4', '<p>アプリ4の内容</p>');
+
+        // 各アプリのボタンを追加
+        document.getElementById('app1-button').addEventListener('click', () => showWindow('app1-window'));
+        document.getElementById('app2-button').addEventListener('click', () => showWindow('app2-window'));
+        document.getElementById('app3-button').addEventListener('click', () => showWindow('app3-window'));
+        document.getElementById('app4-button').addEventListener('click', () => showWindow('app4-window'));
     </script>
 </body>
 </html>
