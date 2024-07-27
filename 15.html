@@ -40,6 +40,9 @@
             border-top-right-radius: 8px;
             cursor: move;
         }
+        .window-buttons {
+            display: flex;
+        }
         .window-buttons button {
             background-color: transparent;
             border: none;
@@ -58,7 +61,7 @@
             left: 10px;
             width: 50px;
             height: 50px;
-            background-image: url('image/15.png'); /* アイコン画像を指定 */
+            background-image: url('start-icon.png'); /* アイコン画像を指定 */
             background-size: cover;
             border: none;
             cursor: pointer;
@@ -143,7 +146,12 @@
         <!-- アプリウィンドウ -->
         <div id="cmd" class="window">
             <div class="window-header">
-                CMD
+                <span>CMD</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('cmd')">−</button>
+                    <button onclick="maximizeWindow('cmd')">⬜</button>
+                    <button onclick="closeWindow('cmd')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <textarea style="width: 100%; height: 100%;"></textarea>
@@ -151,7 +159,12 @@
         </div>
         <div id="fileexplorer" class="window">
             <div class="window-header">
-                ファイルエクスプローラー
+                <span>ファイルエクスプローラー</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('fileexplorer')">−</button>
+                    <button onclick="maximizeWindow('fileexplorer')">⬜</button>
+                    <button onclick="closeWindow('fileexplorer')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <input type="file" id="fileUpload" multiple>
@@ -160,7 +173,12 @@
         </div>
         <div id="paint" class="window">
             <div class="window-header">
-                ペイント
+                <span>ペイント</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('paint')">−</button>
+                    <button onclick="maximizeWindow('paint')">⬜</button>
+                    <button onclick="closeWindow('paint')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <iframe src="https://paint.js.org" style="width: 100%; height: 100%; border: none;"></iframe>
@@ -168,7 +186,12 @@
         </div>
         <div id="calc" class="window">
             <div class="window-header">
-                計算機
+                <span>計算機</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calc')">−</button>
+                    <button onclick="maximizeWindow('calc')">⬜</button>
+                    <button onclick="closeWindow('calc')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <iframe src="https://www.calculator.net" style="width: 100%; height: 100%; border: none;"></iframe>
@@ -176,7 +199,12 @@
         </div>
         <div id="calendar" class="window">
             <div class="window-header">
-                カレンダー
+                <span>カレンダー</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('calendar')">−</button>
+                    <button onclick="maximizeWindow('calendar')">⬜</button>
+                    <button onclick="closeWindow('calendar')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <iframe src="https://calendar.google.com" style="width: 100%; height: 100%; border: none;"></iframe>
@@ -184,7 +212,12 @@
         </div>
         <div id="settings" class="window">
             <div class="window-header">
-                設定
+                <span>設定</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('settings')">−</button>
+                    <button onclick="maximizeWindow('settings')">⬜</button>
+                    <button onclick="closeWindow('settings')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <label for="language">言語:</label>
@@ -204,7 +237,12 @@
         </div>
         <div id="text-editor" class="window">
             <div class="window-header">
-                テキストエディタ
+                <span>テキストエディタ</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('text-editor')">−</button>
+                    <button onclick="maximizeWindow('text-editor')">⬜</button>
+                    <button onclick="closeWindow('text-editor')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <textarea id="editor" style="width: 100%; height: 100%;"></textarea>
@@ -213,49 +251,62 @@
         </div>
         <div id="photo-viewer" class="window">
             <div class="window-header">
-                フォトビューア
+                <span>フォトビューア</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('photo-viewer')">−</button>
+                    <button onclick="maximizeWindow('photo-viewer')">⬜</button>
+                    <button onclick="closeWindow('photo-viewer')">×</button>
+                </div>
             </div>
             <div class="window-content">
-                <img id="photo" src="" style="width: 100%; height: 100%; object-fit: contain;">
+                <img id="photo" style="width: 100%; height: 100%;">
             </div>
         </div>
         <div id="media-player" class="window">
             <div class="window-header">
-                メディアプレイヤー
+                <span>メディアプレイヤー</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('media-player')">−</button>
+                    <button onclick="maximizeWindow('media-player')">⬜</button>
+                    <button onclick="closeWindow('media-player')">×</button>
+                </div>
             </div>
             <div class="window-content">
                 <video id="video" controls style="width: 100%; height: 100%;"></video>
             </div>
         </div>
-
-        <!-- スタートボタン -->
         <button id="start-button"></button>
-        <!-- スタートメニュー -->
         <div id="start-menu">
-            <div id="start-menu-name">ユーザー名</div> <!-- ここに名前を追加 -->
+            <div id="start-menu-name"></div>
             <button onclick="openWindow('cmd')">CMD</button>
             <button onclick="openWindow('fileexplorer')">ファイルエクスプローラー</button>
             <button onclick="openWindow('paint')">ペイント</button>
             <button onclick="openWindow('calc')">計算機</button>
             <button onclick="openWindow('calendar')">カレンダー</button>
             <button onclick="openWindow('settings')">設定</button>
+            <button onclick="openWindow('text-editor')">テキストエディタ</button>
         </div>
-
-        <!-- 右クリックメニュー -->
         <div id="context-menu">
             <ul>
-                <li onclick="createTextFile()">テキストファイル作成</li>
+                <li onclick="createTextFile()">新しいテキストファイル</li>
             </ul>
         </div>
+        <div id="copilot" class="window">
+            <div class="window-header">
+                <span>Copilot</span>
+                <div class="window-buttons">
+                    <button onclick="minimizeWindow('copilot')">−</button>
+                    <button onclick="maximizeWindow('copilot')">⬜</button>
+                    <button onclick="closeWindow('copilot')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe src="https://your-copilot-url-here.com" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
     </div>
-
     <script>
-        const windows = document.querySelectorAll('.window');
-        const startButton = document.getElementById('start-button');
-        const startMenu = document.getElementById('start-menu');
-        const contextMenu = document.getElementById('context-menu');
-        const fileList = document.getElementById('fileList');
-        let maxZIndex = 1;
+        let maxZIndex = 1000;
 
         // ウィンドウを開く
         function openWindow(id) {
@@ -270,14 +321,40 @@
             window.style.display = 'none';
         }
 
+        // ウィンドウを最小化
+        function minimizeWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'none';
+        }
+
+        // ウィンドウを最大化/元に戻す
+        function maximizeWindow(id) {
+            const window = document.getElementById(id);
+            if (window.classList.contains('maximized')) {
+                window.classList.remove('maximized');
+                window.style.width = '400px';
+                window.style.height = '300px';
+                window.style.top = '100px';
+                window.style.left = '100px';
+            } else {
+                window.classList.add('maximized');
+                window.style.width = '100vw';
+                window.style.height = '100vh';
+                window.style.top = '0';
+                window.style.left = '0';
+            }
+        }
+
         // スタートメニューの表示/非表示
-        startButton.addEventListener('click', () => {
+        document.getElementById('start-button').addEventListener('click', () => {
+            const startMenu = document.getElementById('start-menu');
             startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
         });
 
         // 右クリックメニューの表示
         function showContextMenu(event) {
             event.preventDefault();
+            const contextMenu = document.getElementById('context-menu');
             contextMenu.style.left = `${event.pageX}px`;
             contextMenu.style.top = `${event.pageY}px`;
             contextMenu.style.display = 'block';
@@ -285,7 +362,7 @@
 
         // 右クリックメニューを閉じる
         window.addEventListener('click', () => {
-            contextMenu.style.display = 'none';
+            document.getElementById('context-menu').style.display = 'none';
         });
 
         // テキストファイルの作成
@@ -296,7 +373,7 @@
                 newFile.className = 'file';
                 newFile.textContent = fileName;
                 newFile.onclick = () => openTextFile(fileName);
-                fileList.appendChild(newFile);
+                document.getElementById('fileList').appendChild(newFile);
             }
         }
 
@@ -334,7 +411,7 @@
                 listItem.className = 'file-list-item';
                 listItem.textContent = file.name;
                 listItem.onclick = () => openFile(file);
-                fileList.appendChild(listItem);
+                document.getElementById('fileList').appendChild(listItem);
             }
         });
 
