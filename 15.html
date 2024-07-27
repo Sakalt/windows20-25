@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 15</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #282c34;
+            color: white;
+        }
+        #desktop {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #282c34;
+        }
+        .window {
+            width: 400px;
+            height: 300px;
+            position: absolute;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            z-index: 0;
+        }
+        .window-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0078D7;
+            color: white;
+            padding: 5px 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: move;
+        }
+        .window-buttons button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 2px;
+        }
+        .window-content {
+            padding: 10px;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        #start-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 50px;
+            height: 50px;
+            background-image: url('image/15.png'); /* アイコン画像を指定 */
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+        }
+        #start-menu {
+            position: absolute;
+            bottom: 70px;
+            left: 10px;
+            width: 500px;
+            height: 500px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            padding-top: 40px; /* 名前を表示するためのスペース */
+        }
+        #start-menu-name {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px; /* 名前の高さ */
+            background-color: #0078D7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #start-menu button {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+        }
+        #context-menu {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            border: 1px solid #ccc;
+            display: none;
+            z-index: 1000;
+        }
+        #context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 5px 0;
+        }
+        #context-menu ul li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #context-menu ul li:hover {
+            background-color: #555;
+        }
+        #text-files {
+            display: flex;
+            flex-direction: column;
+        }
+        #text-files .file {
+            background-color: #444;
+            margin: 5px;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .file-list-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .file-list-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="desktop" oncontextmenu="showContextMenu(event)">
+        <!-- アプリウィンドウ -->
+        <div id="cmd" class="window">
+            <div class="window-header">
+                CMD
+            </div>
+            <div class="window-content">
+                <textarea style="width: 100%; height: 100%;"></textarea>
+            </div>
+        </div>
+        <div id="fileexplorer" class="window">
+            <div class="window-header">
+                ファイルエクスプローラー
+            </div>
+            <div class="window-content">
+                <input type="file" id="fileUpload" multiple>
+                <div id="fileList"></div>
+            </div>
+        </div>
+        <div id="paint" class="window">
+            <div class="window-header">
+                ペイント
+            </div>
+            <div class="window-content">
+                <iframe src="https://paint.js.org" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="calc" class="window">
+            <div class="window-header">
+                計算機
+            </div>
+            <div class="window-content">
+                <iframe src="https://www.calculator.net" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="calendar" class="window">
+            <div class="window-header">
+                カレンダー
+            </div>
+            <div class="window-content">
+                <iframe src="https://calendar.google.com" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+        <div id="settings" class="window">
+            <div class="window-header">
+                設定
+            </div>
+            <div class="window-content">
+                <label for="language">言語:</label>
+                <select id="language">
+                    <option value="ja">日本語</option>
+                    <option value="en">英語</option>
+                </select><br><br>
+                <label for="theme">テーマ:</label>
+                <select id="theme">
+                    <option value="light">ライト</option>
+                    <option value="dark">ダーク</option>
+                </select><br><br>
+                <label for="username">ユーザー名:</label>
+                <input type="text" id="username"><br><br>
+                <button onclick="saveSettings()">保存</button>
+            </div>
+        </div>
+        <div id="text-editor" class="window">
+            <div class="window-header">
+                テキストエディタ
+            </div>
+            <div class="window-content">
+                <textarea id="editor" style="width: 100%; height: 100%;"></textarea>
+                <button onclick="saveTextFile()">保存</button>
+            </div>
+        </div>
+        <div id="photo-viewer" class="window">
+            <div class="window-header">
+                フォトビューア
+            </div>
+            <div class="window-content">
+                <img id="photo" src="" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        </div>
+        <div id="media-player" class="window">
+            <div class="window-header">
+                メディアプレイヤー
+            </div>
+            <div class="window-content">
+                <video id="video" controls style="width: 100%; height: 100%;"></video>
+            </div>
+        </div>
+
+        <!-- スタートボタン -->
+        <button id="start-button"></button>
+        <!-- スタートメニュー -->
+        <div id="start-menu">
+            <div id="start-menu-name">ユーザー名</div> <!-- ここに名前を追加 -->
+            <button onclick="openWindow('cmd')">CMD</button>
+            <button onclick="openWindow('fileexplorer')">ファイルエクスプローラー</button>
+            <button onclick="openWindow('paint')">ペイント</button>
+            <button onclick="openWindow('calc')">計算機</button>
+            <button onclick="openWindow('calendar')">カレンダー</button>
+            <button onclick="openWindow('settings')">設定</button>
+        </div>
+
+        <!-- 右クリックメニュー -->
+        <div id="context-menu">
+            <ul>
+                <li onclick="createTextFile()">テキストファイル作成</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const windows = document.querySelectorAll('.window');
+        const startButton = document.getElementById('start-button');
+        const startMenu = document.getElementById('start-menu');
+        const contextMenu = document.getElementById('context-menu');
+        const fileList = document.getElementById('fileList');
+        let maxZIndex = 1;
+
+        // ウィンドウを開く
+        function openWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'block';
+            window.style.zIndex = ++maxZIndex;
+        }
+
+        // ウィンドウを閉じる
+        function closeWindow(id) {
+            const window = document.getElementById(id);
+            window.style.display = 'none';
+        }
+
+        // スタートメニューの表示/非表示
+        startButton.addEventListener('click', () => {
+            startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // 右クリックメニューの表示
+        function showContextMenu(event) {
+            event.preventDefault();
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+            contextMenu.style.display = 'block';
+        }
+
+        // 右クリックメニューを閉じる
+        window.addEventListener('click', () => {
+            contextMenu.style.display = 'none';
+        });
+
+        // テキストファイルの作成
+        function createTextFile() {
+            const fileName = prompt('ファイル名を入力してください:');
+            if (fileName) {
+                const newFile = document.createElement('div');
+                newFile.className = 'file';
+                newFile.textContent = fileName;
+                newFile.onclick = () => openTextFile(fileName);
+                fileList.appendChild(newFile);
+            }
+        }
+
+        // テキストファイルを開く
+        function openTextFile(fileName) {
+            openWindow('text-editor');
+            document.getElementById('editor').value = localStorage.getItem(fileName) || '';
+        }
+
+        // テキストファイルを保存
+        function saveTextFile() {
+            const fileName = prompt('ファイル名を入力してください:');
+            if (fileName) {
+                const content = document.getElementById('editor').value;
+                localStorage.setItem(fileName, content);
+                alert('ファイルを保存しました。');
+            }
+        }
+
+        // 設定を保存
+        function saveSettings() {
+            const language = document.getElementById('language').value;
+            const theme = document.getElementById('theme').value;
+            const username = document.getElementById('username').value;
+            localStorage.setItem('settings', JSON.stringify({ language, theme, username }));
+            document.getElementById('start-menu-name').textContent = username; // ユーザー名を更新
+            alert('設定を保存しました。');
+        }
+
+        // ファイルをアップロード
+        document.getElementById('fileUpload').addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (const file of files) {
+                const listItem = document.createElement('div');
+                listItem.className = 'file-list-item';
+                listItem.textContent = file.name;
+                listItem.onclick = () => openFile(file);
+                fileList.appendChild(listItem);
+            }
+        });
+
+        // ファイルを開く
+        function openFile(file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (file.type.startsWith('image/')) {
+                    openWindow('photo-viewer');
+                    document.getElementById('photo').src = event.target.result;
+                } else if (file.type.startsWith('video/')) {
+                    openWindow('media-player');
+                    const video = document.getElementById('video');
+                    video.src = event.target.result;
+                    video.play();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ウィンドウのドラッグ
+        let isDragging = false;
+        let dragOffsetX, dragOffsetY;
+
+        document.addEventListener('mousedown', (event) => {
+            const target = event.target.closest('.window');
+            if (target && event.target.classList.contains('window-header')) {
+                isDragging = true;
+                dragOffsetX = event.clientX - target.getBoundingClientRect().left;
+                dragOffsetY = event.clientY - target.getBoundingClientRect().top;
+                target.style.zIndex = ++maxZIndex;
+            }
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                const target = document.querySelector('.window.maximized');
+                if (target) {
+                    target.style.top = `${event.clientY - dragOffsetY}px`;
+                    target.style.left = `${event.clientX - dragOffsetX}px`;
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // 初期設定の読み込み
+        window.addEventListener('DOMContentLoaded', () => {
+            const settings = JSON.parse(localStorage.getItem('settings'));
+            if (settings) {
+                document.getElementById('language').value = settings.language;
+                document.getElementById('theme').value = settings.theme;
+                document.getElementById('username').value = settings.username;
+                document.getElementById('start-menu-name').textContent = settings.username; // ユーザー名を更新
+            }
+        });
+    </script>
+</body>
+</html>
